@@ -2,24 +2,36 @@
 <html lang="am"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="screen-orientation" content="landscape">
+<meta name="mobile-web-app-capable" content="yes">
 <title>ABDEPA CITY</title>
 <style>
-:root{--bg:#10121a;--tx:#f4f1e8;--ac:#ffc233;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root{--bg:#10121a;--tx:#f4f1e8;--ac:#ffc233;color-scheme:dark;box-sizing:border-box}
 :root:not([data-theme="light"]){--bg:#10121a;--tx:#f4f1e8;--ac:#ffc233}
 :root[data-theme="dark"]{--bg:#10121a;--tx:#f4f1e8;--ac:#ffc233}
 html,body{height:100%;margin:0;background:var(--bg);color:var(--tx);overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;font-family:system-ui,sans-serif}
 canvas{display:block;position:fixed;inset:0;width:100%;height:100%}
-#t{position:fixed;left:14px;top:calc(env(safe-area-inset-top,0px) + 12px);font-weight:900;font-size:22px;letter-spacing:.5px;text-shadow:0 2px 6px #000a}
+#t{position:fixed;left:calc(env(safe-area-inset-left,0px) + 14px);top:10px;font-weight:900;font-size:20px;letter-spacing:.5px;text-shadow:0 2px 6px #000a}
 #t b{color:var(--ac)}
-#sp{position:fixed;right:14px;top:calc(env(safe-area-inset-top,0px) + 14px);font-weight:800;font-size:20px;text-shadow:0 2px 6px #000a}
-#h{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);text-align:center;font-size:14px;transition:opacity 1s;text-shadow:0 2px 6px #000}
+#sp{position:fixed;right:calc(env(safe-area-inset-right,0px) + 14px);top:12px;font-weight:800;font-size:20px;text-shadow:0 2px 6px #000a}
+#h{position:fixed;left:0;right:0;bottom:12px;text-align:center;font-size:14px;transition:opacity 1s;text-shadow:0 2px 6px #000}
 #js{position:fixed;width:100px;height:100px;border-radius:50%;border:2px solid #fff7;display:none}
 #js i{position:absolute;left:30px;top:30px;width:40px;height:40px;border-radius:50%;background:#fffa}
-#e{position:fixed;right:20px;bottom:calc(env(safe-area-inset-bottom,0px) + 40px);padding:16px 22px;border:0;border-radius:16px;background:var(--ac);color:#15120a;font-size:18px;font-weight:800;display:none}
+#e{position:fixed;right:calc(env(safe-area-inset-right,0px) + 24px);bottom:24px;padding:14px 22px;border:0;border-radius:16px;background:var(--ac);color:#15120a;font-size:18px;font-weight:800;display:none}
+#ov{position:fixed;inset:0;z-index:10;background:#10121aee;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;padding:20px}
+#ov h1{margin:0;font-size:34px;font-weight:900}
+#ov h1 b{color:var(--ac)}
+#ov p{margin:0;opacity:.85;font-size:16px}
+#go{padding:16px 40px;border:0;border-radius:16px;background:var(--ac);color:#15120a;font-size:22px;font-weight:800}
+#rot{position:fixed;inset:0;z-index:9;background:#10121a;display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;font-size:20px;font-weight:700;text-align:center}
+#rot span{font-size:60px}
+@media (orientation:portrait){#rot.on{display:flex}}
 </style></head><body>
 <div id="t">ABDEPA <b>CITY</b></div><div id="sp"></div>
 <div id="h">ግራ ጎን ጣት: ተንቀሳቀስ · ቀኝ ጎን ጣት: ካሜራ አዙር</div>
 <div id="js"><i></i></div><button id="e">🚗 ግባ</button>
+<div id="ov"><h1>ABDEPA <b>CITY</b></h1><p>ስልክህን ስታዞር ጨዋታው በራሱ ይዞራል (Auto-rotate ክፍት ይሁን)</p><button id="go">▶ ጀምር</button></div>
+<div id="rot"><span>🔄</span>ስልክህን በአግድም አዙር</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 const $=id=>document.getElementById(id);
@@ -27,11 +39,11 @@ const R=new THREE.WebGLRenderer({antialias:true});
 R.setPixelRatio(Math.min(devicePixelRatio,2));document.body.prepend(R.domElement);
 const S=new THREE.Scene(),SKY=0x8ec3f0;
 S.background=new THREE.Color(SKY);S.fog=new THREE.Fog(SKY,90,330);
-const C=new THREE.PerspectiveCamera(65,1,.1,700);
+const C=new THREE.PerspectiveCamera(55,1,.1,700);
 S.add(new THREE.HemisphereLight(0xffffff,0x667788,1));
 const sun=new THREE.DirectionalLight(0xfff0c8,.7);sun.position.set(80,150,60);S.add(sun);
 function rs(){R.setSize(innerWidth,innerHeight);C.aspect=innerWidth/innerHeight;C.updateProjectionMatrix()}
-rs();addEventListener('resize',rs);
+rs();addEventListener('resize',rs);addEventListener('orientationchange',()=>setTimeout(rs,200));
 const M=c=>new THREE.MeshLambertMaterial({color:c});
 const box=(w,h,d,c)=>new THREE.Mesh(new THREE.BoxGeometry(w,h,d),M(c));
 let seed=7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
@@ -55,6 +67,29 @@ const wc=document.createElement('canvas');wc.width=wc.height=64;const wx=wc.getC
 wx.fillStyle='#fff';wx.fillRect(0,0,64,64);
 for(let i=0;i<4;i++)for(let j=0;j<4;j++){wx.fillStyle=rnd()<.4?'#ffe9a0':'#6f8296';wx.fillRect(i*16+3,j*16+3,10,10)}
 const WT=new THREE.CanvasTexture(wc);WT.wrapS=WT.wrapT=THREE.RepeatWrapping;
+const SIGNS=[['ሱቅ','#c62828'],['MALL','#6a1b9a'],['CAFE','#4e342e'],['ካፌ','#00695c'],['HOTEL','#1565c0'],['PHARMACY','#2e7d32'],['ባንክ','#f9a825'],['ምግብ ቤት','#d84315'],['SUPERMARKET','#283593'],['ABDEPA','#212121']];
+const sigTex={};
+function sigMat(i){if(!sigTex[i]){const c=document.createElement('canvas');c.width=256;c.height=64;const x=c.getContext('2d');
+  x.fillStyle=SIGNS[i][1];x.fillRect(0,0,256,64);x.strokeStyle='#fff';x.lineWidth=4;x.strokeRect(3,3,250,58);
+  x.fillStyle='#fff';x.font='bold 32px system-ui,sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText(SIGNS[i][0],128,34);
+  sigTex[i]=new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(c)})}return sigTex[i]}
+function putSign(x,z,y,sw,sh,side,axis,i){
+  const m=new THREE.Mesh(new THREE.PlaneGeometry(sw,sh),sigMat(i));
+  if(axis==='x'){m.position.set(x+side*.06,y,z);m.rotation.y=side>0?Math.PI/2:-Math.PI/2}
+  else{m.position.set(x,y,z+side*.06);m.rotation.y=side>0?0:Math.PI}
+  S.add(m);
+}
+function addSigns(lx,lz,w,d,h,a,b,mall){
+  const sx=a?1:-1,sz=b?1:-1,i=Math.floor(rnd()*SIGNS.length);
+  if(mall){
+    putSign(lx+sx*(w/2),lz,Math.min(h-2,6),Math.min(d*.8,16),4,sx,'x',1);
+    putSign(lx,lz+sz*(d/2),Math.min(h-2,6),Math.min(w*.8,16),4,sz,'z',1);
+  }else{
+    putSign(lx+sx*(w/2),lz,3.2,Math.min(d*.7,9),2.4,sx,'x',i);
+    putSign(lx,lz+sz*(d/2),3.2,Math.min(w*.7,9),2.4,sz,'z',(i+3)%SIGNS.length);
+    if(h>30)putSign(lx+sx*(w/2),lz,h-4,Math.min(d*.8,12),3.5,sx,'x',(i+5)%SIGNS.length);
+  }
+}
 const B=[],pal=[0xc9b79c,0xb8c4d0,0xd9a5a0,0xa9c8b0,0xe0d6c0,0x9aa7b8];
 for(let i=0;i<N;i++)for(let j=0;j<N;j++){
   const cx=(i+.5)*CELL,cz=(j+.5)*CELL,lot=(BLK-6)/2;
@@ -66,11 +101,13 @@ for(let i=0;i<N;i++)for(let j=0;j<N;j++){
       const tr=new THREE.Mesh(new THREE.ConeGeometry(2,6,6),M(0x2f6b3a));tr.position.set(lx,3.5,lz);S.add(tr);
       continue;
     }
-    const w=lot-2-rnd()*4,d=lot-2-rnd()*4,h=8+rnd()*rnd()*70;
+    const mall=rnd()<.1;
+    const w=lot-2-rnd()*4,d=lot-2-rnd()*4,h=mall?11+rnd()*4:8+rnd()*rnd()*70;
     const t=WT.clone();t.needsUpdate=true;t.repeat.set(w/8,h/8);
-    const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshLambertMaterial({color:pal[Math.floor(rnd()*pal.length)],map:t}));
+    const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshLambertMaterial({color:mall?0xf0d9a0:pal[Math.floor(rnd()*pal.length)],map:t}));
     m.position.set(lx,.4+h/2,lz);S.add(m);
     B.push({x0:lx-w/2,x1:lx+w/2,z0:lz-d/2,z1:lz+d/2});
+    addSigns(lx,lz,w,d,h,a,b,mall);
   }
 }
 
@@ -89,6 +126,49 @@ const cars=[0x1e6fd9,0xe63946,0xf4d35e,0x2a9d8f].map((c,i)=>{
   const o={g:mkCar(c),x:CELL+(i%2?4:-4),z:CELL+14+i*14,h:0,v:0};
   o.g.position.set(o.x,0,o.z);return o;
 });
+
+/* ---- የሚሄዱ ሰዎች ---- */
+const NP=[],pcols=[0xd23b3b,0x3b6fd2,0xe0b030,0x8e44ad,0xeeeeee,0x2a9d8f],skins=[0x8d5a3b,0xc68642,0x5a3825,0xe0ac69];
+function mkPerson(col){
+  const g=new THREE.Group();
+  const t=box(.5,.7,.3,col);t.position.y=1.0;g.add(t);
+  const hd=new THREE.Mesh(new THREE.SphereGeometry(.16,8,6),M(skins[Math.floor(rnd()*4)]));hd.position.y=1.5;g.add(hd);
+  const legs=[];
+  for(const x of [-.12,.12]){const l=new THREE.Group();l.position.set(x,.65,0);const s=box(.17,.65,.2,0x2b2f3a);s.position.y=-.32;l.add(s);g.add(l);legs.push(l)}
+  g.userData.legs=legs;S.add(g);return g;
+}
+for(let k=0;k<30;k++){
+  const i=Math.floor(rnd()*N),j=Math.floor(rnd()*N);
+  NP.push({g:mkPerson(pcols[k%pcols.length]),cx:(i+.5)*CELL,cz:(j+.5)*CELL,t:rnd()*424,sp:1.4+rnd()*1.2,dir:rnd()<.5?1:-1,ph:rnd()*6});
+}
+function ringPos(cx,cz,t){
+  const s=26.5,L=2*s;t=((t%(4*L))+4*L)%(4*L);let x,z,h;
+  if(t<L){x=-s+t;z=-s;h=Math.PI/2}
+  else if(t<2*L){x=s;z=-s+(t-L);h=0}
+  else if(t<3*L){x=s-(t-2*L);z=s;h=-Math.PI/2}
+  else{x=-s;z=s-(t-3*L);h=Math.PI}
+  return [cx+x,cz+z,h];
+}
+
+/* ---- የሚሄዱ መኪናዎችና ትላልቅ መኪናዎች ---- */
+function mkTruck(col){
+  const g=new THREE.Group();
+  const cab=box(2.3,2,2,col);cab.position.set(0,1.6,3.6);g.add(cab);
+  const win=box(2.1,.7,.1,0xcfe6ff);win.position.set(0,2.0,4.62);g.add(win);
+  const cg=box(2.6,2.8,6.4,0xeeeeee);cg.position.set(0,2.1,-.9);g.add(cg);
+  const ch=box(2.2,.5,10,0x222222);ch.position.set(0,.65,.9);g.add(ch);
+  for(const z of [-3,-1.8,3.6])for(const x of [-1.2,1.2]){
+    const w=new THREE.Mesh(new THREE.CylinderGeometry(.5,.5,.35,12),M(0x111111));
+    w.rotation.z=Math.PI/2;w.position.set(x,.5,z);g.add(w);
+  }
+  S.add(g);return g;
+}
+const TR=[],tcols=[0xe63946,0x2a9d8f,0xf4d35e,0x7b2cbf,0xffffff,0x333333,0x1e6fd9],kcols=[0xd9822b,0x3b6fd2,0x2e7d32];
+for(let k=0;k<26;k++){
+  const truck=k%5===4;
+  const g=truck?mkTruck(kcols[k%3]):mkCar(tcols[k%7]);
+  TR.push({g,ri:1+Math.floor(rnd()*(N-1)),alongX:k%2===0,fw:rnd()<.5?1:-1,pos:rnd()*SIZE,v:7+rnd()*6});
+}
 
 /* ---- አብዲፓ ---- */
 const SKIN=0x8d5a3b,JAC=0x2f6b3a,WRAP=0xd23b3b;
@@ -118,7 +198,7 @@ let jx=0,jy=0,sid=null,so=null,cid=null,cl=0;const keys={},js=$('js');
 addEventListener('keydown',e=>{keys[e.code]=1;if(e.code==='KeyE')toggle()});
 addEventListener('keyup',e=>keys[e.code]=0);
 addEventListener('pointerdown',e=>{
-  if(e.target.id==='e')return;
+  if(e.target.id==='e'||e.target.closest('#ov'))return;
   if(e.clientX<innerWidth/2&&sid===null){sid=e.pointerId;so={x:e.clientX,y:e.clientY};
     js.style.cssText='display:block;left:'+(so.x-50)+'px;top:'+(so.y-50)+'px';}
   else if(cid===null){cid=e.pointerId;cl=e.clientX}
@@ -131,7 +211,17 @@ addEventListener('pointermove',e=>{
 const up=e=>{if(e.pointerId===sid){sid=null;jx=jy=0;js.style.display='none'}if(e.pointerId===cid)cid=null};
 addEventListener('pointerup',up);addEventListener('pointercancel',up);
 $('e').addEventListener('pointerdown',e=>{e.stopPropagation();toggle()});
-setTimeout(()=>$('h').style.opacity=0,7000);
+
+/* ---- ጀምር: ሙሉ ስክሪን + አግድም ---- */
+async function startGame(){
+  const el=document.documentElement;
+  try{if(el.requestFullscreen)await el.requestFullscreen();else if(el.webkitRequestFullscreen)el.webkitRequestFullscreen()}catch(e){}
+  try{await screen.orientation.lock('landscape')}catch(e){}
+  $('ov').style.display='none';
+  setTimeout(rs,300);
+  setTimeout(()=>$('h').style.opacity=0,7000);
+}
+$('go').addEventListener('click',startGame);
 
 function near(){let best=null,bd=36;for(const c of cars){const d=(c.x-p.x)**2+(c.z-p.z)**2;if(d<bd){bd=d;best=c}}return best}
 function toggle(){
@@ -176,9 +266,23 @@ function frame(now){
     const sw=sp>0?Math.sin(walkT)*Math.min(1,sp/4):0;
     lL.rotation.x=sw*.9;lR.rotation.x=-sw*.9;aL.rotation.x=-sw*.8;aR.rotation.x=sw*.8;
   }
-  const dist=mode?11:7,hh=mode?5:4;
+  const tm=now/1000;
+  for(const n of NP){
+    n.t+=n.dir*n.sp*dt;
+    const [x,z,h]=ringPos(n.cx,n.cz,n.t);
+    n.g.position.set(x,.4,z);n.g.rotation.y=h+(n.dir<0?Math.PI:0);
+    const sw=Math.sin(tm*n.sp*3+n.ph)*.7,L=n.g.userData.legs;L[0].rotation.x=sw;L[1].rotation.x=-sw;
+  }
+  for(const c of TR){
+    c.pos=(c.pos+c.v*dt)%SIZE;
+    const rc=c.ri*CELL,q=c.fw>0?c.pos:SIZE-c.pos;
+    if(c.alongX){c.g.position.set(q,0,rc+c.fw*4.5);c.g.rotation.y=c.fw>0?Math.PI/2:-Math.PI/2}
+    else{c.g.position.set(rc-c.fw*4.5,0,q);c.g.rotation.y=c.fw>0?0:Math.PI}
+    if(mode){const dx=c.g.position.x-mode.x,dz=c.g.position.z-mode.z;if(dx*dx+dz*dz<16)mode.v*=.9}
+  }
+  const dist=mode?11:7,hh=mode?5:3.2;
   tp.set(p.x-Math.sin(cy)*dist,hh,p.z-Math.cos(cy)*dist);
-  C.position.lerp(tp,1-Math.exp(-10*dt));C.lookAt(p.x,1.5,p.z);
+  C.position.lerp(tp,1-Math.exp(-10*dt));C.lookAt(p.x,1.3,p.z);
   $('e').style.display=(mode||near())?'block':'none';
   $('e').textContent=mode?'🚶 ውጣ':'🚗 ግባ';
   $('sp').textContent=mode?Math.round(sp*3.6)+' km/h':'';
